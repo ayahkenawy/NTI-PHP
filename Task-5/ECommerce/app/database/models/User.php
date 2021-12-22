@@ -164,7 +164,7 @@ class User extends connection implements crud
 
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password = sha1($password);
 
         return $this;
     }
@@ -256,7 +256,21 @@ class User extends connection implements crud
 
         return $this;
     }
-    public function create(){}
+    public function create()
+    {
+        $query="INSERT INTO `USERS` (`name`,`gender`,`phone`,`email`,`password`,`code`) VALUES ('$this->name','$this->gender','$this->phone','$this->email','$this->password',$this->code)";
+         return $this->runDML($query);
+    }
+    public function checkEmailExists()
+    {
+        $query="select * from users where email = '$this->email'";
+        return $this->runDQL($query);
+    }
+    public function checkPhoneExists()
+    {
+        $query="select * from users where phone = '$this->phone'";
+        return $this->runDQL($query);
+    }
     public function read(){}
     public function update(){}
     public function delete(){}

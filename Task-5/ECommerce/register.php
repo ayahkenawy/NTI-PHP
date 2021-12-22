@@ -4,11 +4,15 @@ include_once 'layouts/header.php';
 include_once 'layouts/nav.php';
 include_once 'layouts/breadcrumb.php';
 include_once 'app/requests/registerRequest.php';
+include_once 'app/database/models/User.php';
 if ($_POST) {
     $Validation = new registerRequest();
     $Validation->setEmail($_POST['email']);
     $emailResult = $Validation->emailValidation();
     // email & phone must be unique in database
+    $emailExistsResult=$Validation->emailExists();
+    $Validation->setPhone($_POST['phone']);
+    $phoneExistsResult=$Validation->phoneExists();
     $Validation->setPassword($_POST['password']);
     $Validation->setConfirmPassword($_POST['confirm_password']);
     $passwordValidation = $Validation->passwordValidation();
@@ -18,9 +22,25 @@ if ($_POST) {
         empty($passwordValidation) &&
         empty($emailResult) &&
         empty($confirmPasswordValidation) &&
-        empty($confirmPasswordEqualPassword)
+        empty($confirmPasswordEqualPassword)&&
+        empty($emailExistsResult)&&
+        empty($phoneExistsResult)
     ) {
         //insert into database
+        $code =rand(10000,99999);
+        $user = new User();
+        $user->setName ($_POST['full_name']);
+        $user->setGender ($_POST['gender']);
+        $user->setPhone ($_POST['phone']);
+        $user->setEmail ($_POST['email']);
+        $user->setPassword($_POST['password']);
+        $user->setCode($code);
+        $result= $user->create();
+        if ($result) {
+            //check email //send code
+            //header to verify code 
+            header('location:verify_code.php');
+        }
     }
 }
 ?>
@@ -38,6 +58,13 @@ if ($_POST) {
                         <div id="lg2" class="tab-pane active">
                             <div class="login-form-container">
                                 <div class="login-register-form">
+                                    <?php 
+                                    if (isset($result)) {
+                                        if (!$result) {
+                                            echo "<div class='alert alert-danger'>Try Again Later</div>";
+                                        }
+                                    }
+                                    ?>
                                     <form action="#" method="post">
                                         <input type="text" name="full_name" placeholder="User Full name" value="<?= isset(
                                             $_POST['full_name']
@@ -52,13 +79,22 @@ if ($_POST) {
                                         <?php if (!empty($emailResult)) {
                                             foreach ($emailResult as $value) {
                                                 echo $value;
-                                            }
+                                            }}
+                                            if (!empty($emailExistsResult)) {
+                                                foreach ($emailExistsResult as $value) {
+                                                    echo $value;
+                                                }
                                         } ?>
                                         <input name="phone" placeholder="Phone" type="tel" value="<?= isset(
                                             $_POST['phone']
                                         )
                                             ? $_POST['phone']
                                             : '' ?>">
+                                            <?php if (!empty($phoneExistsResult)) {
+                                                foreach ($phoneExistsResult as $value) {
+                                                    echo $value;
+                                                }
+                                        } ?>
                                         <input type="password" name="password" placeholder="Password">
                                         <?php
                                         if (!empty($passwordValidation)) {

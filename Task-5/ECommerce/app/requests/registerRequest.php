@@ -1,4 +1,5 @@
 <?php 
+include_once __DIR__.'/../database/models/User.php';
 class registerRequest{
     private $name;
     private $phone;
@@ -180,10 +181,30 @@ class registerRequest{
     {
         //has specific pattern
         $errors=[];
-        $pattern='/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).{4,8}$/';
+        $pattern='/^(?=[^\d_].*?\d)\w(\w|[!@#$%]){7,20}/';
         if(!preg_match($pattern,$this->password)){
-            $errors['password_pattern']="<div class='alert alert-danger'>Password requires one lower case letter, one upper case letter, one digit, 6-13 length, and no spaces</div>";
+            $errors['password_pattern']="<div class='alert alert-danger'>Password requires a length of 8 to 20 aplhanumeric characters and select special characters. The password also can not start with a digit, underscore or special character and must contain at least one digit</div>";
         };
+        return $errors;
+    }
+    public function emailExists(){
+        $errors=[];
+        $user = new User;
+        $user->setEmail($this->email);
+        $result=$user->checkEmailExists();
+        if ($result) {
+            $errors['email_exists']="<div class='alert alert-danger'>Email Already Exists</div>";
+        }
+        return $errors;
+    }
+    public function phoneExists(){
+        $errors=[];
+        $user = new User;
+        $user->setPhone($this->phone);
+        $result=$user->checkPhoneExists();
+        if ($result) {
+            $errors['phone_exists']="<div class='alert alert-danger'>Phone Already Exists</div>";
+        }
         return $errors;
     }
 }

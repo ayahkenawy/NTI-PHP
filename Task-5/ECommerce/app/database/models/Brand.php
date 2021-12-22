@@ -1,7 +1,7 @@
 <?php
 include_once __DIR__ . '\..\config\connection.php';
 include_once __DIR__ . '\..\config\crud.php';
-class Subcategory extends connection implements crud
+class Brand extends connection implements crud
 {
     private $id;
     private $name_ar;
@@ -10,7 +10,6 @@ class Subcategory extends connection implements crud
     private $img;
     private $created_at;
     private $updated_at;
-    private $categories_fk_id;
 
     /**
      * Get the value of id
@@ -68,26 +67,6 @@ class Subcategory extends connection implements crud
     public function setName_en($name_en)
     {
         $this->name_en = $name_en;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of categories_fk_id
-     */
-    public function getCategories_fk_id()
-    {
-        return $this->categories_fk_id;
-    }
-
-    /**
-     * Set the value of categories_fk_id
-     *
-     * @return  self
-     */
-    public function setCategories_fk_id($categories_fk_id)
-    {
-        $this->categories_fk_id = $categories_fk_id;
 
         return $this;
     }
@@ -176,7 +155,10 @@ class Subcategory extends connection implements crud
     }
     public function read()
     {
-        $query = "select id , name_en from subcategories where status=$this->status and categories_fk_id=$this->categories_fk_id";
+    }
+    public function brandById()
+    {
+        $query = "select id , name_en from brands where status=$this->status and id=$this->id";
         return $this->runDQL($query);
     }
     public function update()
@@ -184,10 +166,5 @@ class Subcategory extends connection implements crud
     }
     public function delete()
     {
-    }
-    public function subById()
-    {
-        $query = "select id , name_en from subcategories where status=$this->status and id=$this->id";
-        return $this->runDQL($query);
     }
 }

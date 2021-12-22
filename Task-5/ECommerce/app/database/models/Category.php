@@ -1,7 +1,8 @@
 <?php
-include_once __DIR__.'\..\config\connection.php';
-include_once __DIR__.'\..\config\crud.php';
-class Category extends connection implements crud{
+include_once __DIR__ . '\..\config\connection.php';
+include_once __DIR__ . '\..\config\crud.php';
+class Category extends connection implements crud
+{
     private $id;
     private $name_ar;
     private $name_en;
@@ -12,7 +13,7 @@ class Category extends connection implements crud{
 
     /**
      * Get the value of id
-     */ 
+     */
     public function getId()
     {
         return $this->id;
@@ -22,7 +23,7 @@ class Category extends connection implements crud{
      * Set the value of id
      *
      * @return  self
-     */ 
+     */
     public function setId($id)
     {
         $this->id = $id;
@@ -32,7 +33,7 @@ class Category extends connection implements crud{
 
     /**
      * Get the value of name_ar
-     */ 
+     */
     public function getName_ar()
     {
         return $this->name_ar;
@@ -42,7 +43,7 @@ class Category extends connection implements crud{
      * Set the value of name_ar
      *
      * @return  self
-     */ 
+     */
     public function setName_ar($name_ar)
     {
         $this->name_ar = $name_ar;
@@ -52,7 +53,7 @@ class Category extends connection implements crud{
 
     /**
      * Get the value of name_en
-     */ 
+     */
     public function getName_en()
     {
         return $this->name_en;
@@ -62,7 +63,7 @@ class Category extends connection implements crud{
      * Set the value of name_en
      *
      * @return  self
-     */ 
+     */
     public function setName_en($name_en)
     {
         $this->name_en = $name_en;
@@ -72,7 +73,7 @@ class Category extends connection implements crud{
 
     /**
      * Get the value of status
-     */ 
+     */
     public function getStatus()
     {
         return $this->status;
@@ -82,7 +83,7 @@ class Category extends connection implements crud{
      * Set the value of status
      *
      * @return  self
-     */ 
+     */
     public function setStatus($status)
     {
         $this->status = $status;
@@ -92,7 +93,7 @@ class Category extends connection implements crud{
 
     /**
      * Get the value of img
-     */ 
+     */
     public function getImg()
     {
         return $this->img;
@@ -102,7 +103,7 @@ class Category extends connection implements crud{
      * Set the value of img
      *
      * @return  self
-     */ 
+     */
     public function setImg($img)
     {
         $this->img = $img;
@@ -112,7 +113,7 @@ class Category extends connection implements crud{
 
     /**
      * Get the value of created_at
-     */ 
+     */
     public function getCreated_at()
     {
         return $this->created_at;
@@ -122,7 +123,7 @@ class Category extends connection implements crud{
      * Set the value of created_at
      *
      * @return  self
-     */ 
+     */
     public function setCreated_at($created_at)
     {
         $this->created_at = $created_at;
@@ -132,7 +133,7 @@ class Category extends connection implements crud{
 
     /**
      * Get the value of updated_at
-     */ 
+     */
     public function getUpdated_at()
     {
         return $this->updated_at;
@@ -142,16 +143,30 @@ class Category extends connection implements crud{
      * Set the value of updated_at
      *
      * @return  self
-     */ 
+     */
     public function setUpdated_at($updated_at)
     {
         $this->updated_at = $updated_at;
 
         return $this;
     }
-    public function create(){}
-    public function read(){}
-    public function update(){}
-    public function delete(){}
+    public function create()
+    {
+    }
+    public function read()
+    {
+        $query = "select id , name_en from categories where status=$this->status order by name_en";
+        return $this->runDQL($query);
+    }
+    public function catById()
+    {
+        $query = "select id , name_en from categories where status=$this->status and id=$this->id";
+        return $this->runDQL($query);
+    }
+    public function update()
+    {
+    }
+    public function delete()
+    {
+    }
 }
-?>

@@ -6,7 +6,7 @@
 					<h3><?= $title?></h3>
                     <ul>
                         <li><a href="index.html">Home</a></li>
-                        <li class="active">Login</li>
+                        <li class="active"><?= $title?></li>
                     </ul>
                 </div>
             </div>
