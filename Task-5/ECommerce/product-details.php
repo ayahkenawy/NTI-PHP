@@ -3,6 +3,22 @@ include_once 'layouts/header.php';
 include_once 'layouts/nav.php';
 include_once 'layouts/breadcrumb.php';
 include_once 'app/database/models/Product.php';
+include_once 'app/database/models/Review.php';
+$reviews = new Review;
+if (isset($_POST['review'])) {
+    //    print_r($_POST);die;
+    $reviews->setProduct_fk_id($_GET['prod']);
+    $reviews->setValue($_POST['value']);
+    // $reviews->setUser_fk_id(3);
+    $reviews->setUser_fk_id($_SESSION['user']->id);
+    $reviews->setComment($_POST['comment']);
+    $resultAddReview = $reviews->create();
+    if ($resultAddReview) {
+        $msgReview = "<div class='alert alert-success'>Thank You</div>";
+    } else {
+        $msgReview = "<div class='alert alert-danger'>Try Letar </div>";
+    }
+}
 if ($_GET) {
     if (isset($_GET['prod'])) {
         if (is_numeric($_GET['prod'])) {
@@ -12,7 +28,7 @@ if ($_GET) {
             $productsResult = $products->productById();
             if ($productsResult) {
                 $product = $productsResult->fetch_object();
-               // print_r($product);die;
+                // print_r($product);die;
             } else {
                 header('Location:errors/404.php');
                 die;
@@ -27,55 +43,106 @@ if ($_GET) {
     }
 }
 ?>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .rate {
+        float: left;
+        height: 46px;
+        padding: 0 10px;
+    }
+
+    .rate:not(:checked)>input {
+        position: absolute;
+        top: -9999px;
+    }
+
+    .rate:not(:checked)>label {
+        float: right;
+        width: 1em;
+        overflow: hidden;
+        white-space: nowrap;
+        cursor: pointer;
+        font-size: 30px;
+        color: #ccc;
+    }
+
+    .rate:not(:checked)>label:before {
+        content: '★ ';
+    }
+
+    .rate>input:checked~label {
+        color: #519f10;
+    }
+
+    .rate:not(:checked)>label:hover,
+    .rate:not(:checked)>label:hover~label {
+        color: #519f10;
+    }
+
+    .rate>input:checked+label:hover,
+    .rate>input:checked+label:hover~label,
+    .rate>input:checked~label:hover,
+    .rate>input:checked~label:hover~label,
+    .rate>label:hover~input:checked~label {
+        color: #519f10;
+    }
+</style>
 <!-- Product Deatils Area Start -->
 <div class="product-details pt-100 pb-95">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-12">
                 <div class="product-details-img">
-                    <img class="zoompro" src="assets/img/product/<?=$product->img?>" data-zoom-image="assets/img/product/<?=$product->img?>" alt="zoom" />
+                    <img class="zoompro" src="assets/img/product/<?= $product->img ?>" data-zoom-image="assets/img/product/<?= $product->img ?>" alt="zoom" />
                     <span>-29%</span>
                 </div>
             </div>
             <div class="col-lg-6 col-md-12">
                 <div class="product-details-content">
-                    <h4><?=$product->name_en?></h4>
+                    <h4><?= $product->name_en ?></h4>
                     <div class="rating-review">
                         <div class="pro-dec-rating">
-                            <i class="ion-android-star-outline theme-star"></i>
-                            <i class="ion-android-star-outline theme-star"></i>
-                            <i class="ion-android-star-outline theme-star"></i>
-                            <i class="ion-android-star-outline theme-star"></i>
-                            <i class="ion-android-star-outline"></i>
+                            <?php for ($i = 1; $i <= 5; $i++) {
+                                if ($i <= $product->reviews_average) { ?>
+                                    <i class="ion-android-star-outline theme-star"></i>
+                                <?php } else { ?>
+                                    <i class="ion-android-star-outline"></i>
+                            <?php }
+                            } ?>
+
                         </div>
                         <div class="pro-dec-review">
                             <ul>
-                                <li>32 Reviews </li>
+                                <li><?= $product->reviews_count ?> Reviews </li>
                                 <li> Add Your Reviews</li>
                             </ul>
                         </div>
                     </div>
-                    <span><?=$product->price?> EGP</span>
+                    <span><?= $product->price ?> EGP</span>
                     <div class="in-stock">
-                        <?php 
+                        <?php
                         if ($product->quantity <= 5 and $product->quantity >= 1) {
-                            $msg="In Stock";
-                            $color="warning";
-                        }
-                        elseif($product->quantity >5){ $msg="In Stock";
-                            $color="success";}
-                        else{
-                            $msg="Out Of Stock";
-                            $color="danger";
+                            $msg = "In Stock";
+                            $color = "warning";
+                        } elseif ($product->quantity > 5) {
+                            $msg = "In Stock";
+                            $color = "success";
+                        } else {
+                            $msg = "Out Of Stock";
+                            $color = "danger";
                         }
                         ?>
-                        <p>Available: <span class="text-<?=$color?>"><?=$msg?></span></p>
+                        <p>Available: <span class="text-<?= $color ?>"><?= $msg ?></span></p>
                     </div>
-                    <p><?=$product->desc_en?> </p>
+                    <p><?= $product->desc_en ?> </p>
                     <div class="quality-add-to-cart">
                         <div class="quality">
                             <label>Qty:</label>
-                            <input class="cart-plus-minus-box" type="text" name="qtybutton" value="<?=$product->quantity?>">
+                            <input class="cart-plus-minus-box" type="text" name="qtybutton" value="<?= $product->quantity ?>">
                         </div>
                         <div class="shop-list-cart-wishlist">
                             <a title="Add To Cart" href="#">
@@ -89,9 +156,9 @@ if ($_GET) {
                     <div class="pro-dec-categories">
                         <ul>
                             <li class="categories-title">Categories:</li>
-                            <li><a href="shop.php?subcat=<?= $product->subcatergories_fk_id ?>"><?=$product->category_name_en?>,</a></li>
-                            <li><a href="shop.php?cat=<?= $product->category_id ?>"><?=$product->sub_name_en?>, </a></li>
-                            <li><a href="shop.php?brand=<?= $product->brand_fk_id ?>"><?=$product->brand_name_en?></a></li>
+                            <li><a href="shop.php?subcat=<?= $product->subcatergories_fk_id ?>"><?= $product->category_name_en ?>,</a></li>
+                            <li><a href="shop.php?cat=<?= $product->category_id ?>"><?= $product->sub_name_en ?>, </a></li>
+                            <li><a href="shop.php?brand=<?= $product->brand_fk_id ?>"><?= $product->brand_name_en ?></a></li>
                         </ul>
                     </div>
                 </div>
@@ -105,109 +172,88 @@ if ($_GET) {
         <div class="description-review-wrapper">
             <div class="description-review-topbar nav text-center">
                 <a class="active" data-toggle="tab" href="#des-details1">Description</a>
-                <a data-toggle="tab" href="#des-details2">Tags</a>
                 <a data-toggle="tab" href="#des-details3">Review</a>
             </div>
             <div class="tab-content description-review-bottom">
                 <div id="des-details1" class="tab-pane active">
                     <div class="product-description-wrapper">
-                        <p>Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam est usus legentis in iis qui facit eorum claritatem. </p>
-                        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-                        <ul>
-                            <li>- Typi non habent claritatem insitam</li>
-                            <li>- Est usus legentis in iis qui facit eorum claritatem. </li>
-                            <li>- Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius.</li>
-                            <li>- Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum.</li>
-                        </ul>
-                    </div>
-                </div>
-                <div id="des-details2" class="tab-pane">
-                    <div class="product-anotherinfo-wrapper">
-                        <ul>
-                            <li><span>Tags:</span></li>
-                            <li><a href="#"> Green,</a></li>
-                            <li><a href="#"> Herbal,</a></li>
-                            <li><a href="#"> Loose,</a></li>
-                            <li><a href="#"> Mate,</a></li>
-                            <li><a href="#"> Organic ,</a></li>
-                            <li><a href="#"> special</a></li>
-                        </ul>
+                        <p><?= $product->desc_en ?></p>
                     </div>
                 </div>
                 <div id="des-details3" class="tab-pane">
                     <div class="rattings-wrapper">
-                        <div class="sin-rattings">
-                            <div class="star-author-all">
-                                <div class="ratting-star f-left">
-                                    <i class="ion-star theme-color"></i>
-                                    <i class="ion-star theme-color"></i>
-                                    <i class="ion-star theme-color"></i>
-                                    <i class="ion-star theme-color"></i>
-                                    <i class="ion-star theme-color"></i>
-                                    <span>(5)</span>
+                        <?php
+                        $reviews->setProduct_fk_id($product->id);
+                        $reviewRelsult = $reviews->read();
+                        if (!empty($reviewRelsult)) {
+                            $reviewData = $reviewRelsult->fetch_all(MYSQLI_ASSOC);
+                            foreach ($reviewData as $index => $review) { ?>
+                                <div class="sin-rattings">
+                                    <div class="star-author-all">
+                                        <div class="ratting-star f-left">
+                                            <?php for ($i = 1; $i <= 5; $i++) {
+                                                if ($i <= $review['value']) { ?>
+                                                    <i class="ion-star theme-color"></i>
+                                                <?php } else { ?>
+                                                    <i class="ion-android-star-outline"></i>
+                                            <?php }
+                                            } ?>
+                                            <span>(<?= $review['value'] ?>)</span>
+                                        </div>
+                                        <div class="ratting-author f-right">
+                                            <h3><?= $review['user_name'] ?></h3>
+                                            <span><?= $review['created_at'] ?></span>
+                                        </div>
+                                    </div>
+                                    <p><?= $review['comment'] ?></p>
                                 </div>
-                                <div class="ratting-author f-right">
-                                    <h3>Potanu Leos</h3>
-                                    <span>12:24</span>
-                                    <span>9 March 2018</span>
-                                </div>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nost rud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nost.</p>
-                        </div>
-                        <div class="sin-rattings">
-                            <div class="star-author-all">
-                                <div class="ratting-star f-left">
-                                    <i class="ion-star theme-color"></i>
-                                    <i class="ion-star theme-color"></i>
-                                    <i class="ion-star theme-color"></i>
-                                    <i class="ion-star theme-color"></i>
-                                    <i class="ion-star theme-color"></i>
-                                    <span>(5)</span>
-                                </div>
-                                <div class="ratting-author f-right">
-                                    <h3>Kahipo Khila</h3>
-                                    <span>12:24</span>
-                                    <span>9 March 2018</span>
-                                </div>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nost rud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nost.</p>
-                        </div>
+                        <?php }
+                        } else {
+                            echo "<div class='alert alert-warning'>No Reviews</div>";
+                        }
+                        ?>
                     </div>
+                    <?php //if (isset($_SESSION['user'])) {
+                        if (isset($msgReview)) {
+                            echo $msgReview;
+                        }
+                     ?>
                     <div class="ratting-form-wrapper">
                         <h3>Add your Comments :</h3>
                         <div class="ratting-form">
-                            <form action="#">
-                                <div class="star-box">
-                                    <h2>Rating:</h2>
-                                    <div class="ratting-star">
-                                        <i class="ion-star theme-color"></i>
-                                        <i class="ion-star theme-color"></i>
-                                        <i class="ion-star theme-color"></i>
-                                        <i class="ion-star theme-color"></i>
-                                        <i class="ion-star"></i>
+                            <form method="post">
+                                <div class="row">
+                                    <div class="star-box">
+                                        <h2>Rating:</h2>
+                                        <div class="ratting-star">
+                                            <div class="rate">
+                                                <input type="radio" id="star5" name="value" value="5" />
+                                                <label for="star5" title="text">5 stars</label>
+                                                <input type="radio" id="star4" name="value" value="4" />
+                                                <label for="star4" title="text">4 stars</label>
+                                                <input type="radio" id="star3" name="value" value="3" />
+                                                <label for="star3" title="text">3 stars</label>
+                                                <input type="radio" id="star2" name="value" value="2" />
+                                                <label for="star2" title="text">2 stars</label>
+                                                <input type="radio" id="star1" name="value" value="1" />
+                                                <label for="star1" title="text">1 star</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="rating-form-style mb-20">
-                                            <input placeholder="Name" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="rating-form-style mb-20">
-                                            <input placeholder="Email" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12  ">
                                         <div class="rating-form-style form-submit">
-                                            <textarea name="message" placeholder="Message"></textarea>
-                                            <input type="submit" value="add review">
+                                            <textarea name="comment" placeholder=" Comment"></textarea>
+                                            <input type="submit" name="review" value="Add Review">
                                         </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
+                    <?php // }
+                    ?>
                 </div>
             </div>
         </div>
