@@ -169,7 +169,7 @@ class registerRequest{
         $errors=[];
         if (empty($this->passwordValidation()) && empty($this->confirmPasswordValidation())) {
             if ($this->confirmPassword == $this->password) {
-                $errors=$this->passwordPattren();
+                $errors=$this->passwordPattern();
             }
             else{
                 $errors['notmatched']="<div class='alert alert-danger'>Password && Confirm Password Not Matched</div>";
@@ -177,7 +177,7 @@ class registerRequest{
         }
         return $errors;
     }
-    public function passwordPattren()
+    public function passwordPattern()
     {
         //has specific pattern
         $errors=[];

@@ -1,6 +1,6 @@
 <?php
-include_once __DIR__.'\..\config\connection.php';
-include_once __DIR__.'\..\config\crud.php';
+include_once __DIR__ . '\..\config\connection.php';
+include_once __DIR__ . '\..\config\crud.php';
 class User extends connection implements crud
 {
     private $id;
@@ -258,20 +258,51 @@ class User extends connection implements crud
     }
     public function create()
     {
-        $query="INSERT INTO `USERS` (`name`,`gender`,`phone`,`email`,`password`,`code`) VALUES ('$this->name','$this->gender','$this->phone','$this->email','$this->password',$this->code)";
-         return $this->runDML($query);
+        $query = "INSERT INTO `USERS` (`name`,`gender`,`phone`,`email`,`password`,`code`) VALUES ('$this->name','$this->gender','$this->phone','$this->email','$this->password',$this->code)";
+        return $this->runDML($query);
     }
     public function checkEmailExists()
     {
-        $query="select * from users where email = '$this->email'";
+        $query = "select * from users where email = '$this->email'";
         return $this->runDQL($query);
     }
     public function checkPhoneExists()
     {
-        $query="select * from users where phone = '$this->phone'";
+        $query = "select * from users where phone = '$this->phone'";
         return $this->runDQL($query);
     }
-    public function read(){}
-    public function update(){}
-    public function delete(){}
+    public function read()
+    {
+    }
+    public function update()
+    {
+    }
+    public function delete()
+    {
+    }
+    public function verifyCode()
+    {
+        $query = "select * from users where code = $this->code and email = '$this->email'";
+        return $this->runDQL($query);
+    }
+    public function updateStatus()
+    {
+        $query = "UPDATE users SET STATUS =  $this->status WHERE email = '$this->email' ";
+        return $this->runDML($query);
+    }
+    public function login()
+    {
+        $query = "select * from users where email = '$this->email' and password = '$this->password'";
+        return $this->runDQL($query);
+    }
+    public function updateCode()
+    {
+        $query = "UPDATE users SET code =  $this->code WHERE email = '$this->email' ";
+        return $this->runDML($query);
+    }
+    public function updatePassword()
+    {
+        $query = "UPDATE users SET password =  '$this->password' WHERE email = '$this->email' ";
+        return $this->runDML($query);
+    }
 }

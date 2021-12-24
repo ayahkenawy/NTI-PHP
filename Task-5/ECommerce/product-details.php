@@ -213,7 +213,7 @@ if ($_GET) {
                         }
                         ?>
                     </div>
-                    <?php //if (isset($_SESSION['user'])) {
+                    <?php if (isset($_SESSION['user'])) {
                         if (isset($msgReview)) {
                             echo $msgReview;
                         }
@@ -252,7 +252,7 @@ if ($_GET) {
                             </form>
                         </div>
                     </div>
-                    <?php // }
+                    <?php  }
                     ?>
                 </div>
             </div>

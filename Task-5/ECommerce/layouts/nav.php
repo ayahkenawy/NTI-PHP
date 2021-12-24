@@ -4,7 +4,7 @@ include_once 'app/database/models/SubCategory.php';
 $categories = new Category();
 $categories->setStatus(1);
 $result = $categories->read();
-$subcategories = new Subcategory;
+$subcategories = new Subcategory();
 $subcategories->setStatus(1);
 ?>
 <!-- header start -->
@@ -25,39 +25,54 @@ $subcategories->setStatus(1);
                             <nav>
                                 <ul>
                                     <li class="top-hover"><a href="index.php">home</a>
-                                        <ul class="submenu">
-                                            <li><a href="index.php">home version 1</a></li>
-                                            <li><a href="index-2.php">home version 2</a></li>
-                                        </ul>
                                     </li>
                                     <li class="mega-menu-position top-hover"><a href="shop.php">Categories</a>
                                         <ul class="mega-menu">
-                                            <?php
-                                            if (!empty($result)) {
-                                                $catData = $result->fetch_all(MYSQLI_ASSOC);
-                                                foreach ($catData as $index => $category) {
-                                            ?>
+                                            <?php if (!empty($result)) {
+                                                $catData = $result->fetch_all(
+                                                    MYSQLI_ASSOC
+                                                );
+                                                foreach (
+                                                    $catData
+                                                    as $index => $category
+                                                ) { ?>
                                                     <li>
                                                         <ul>
-                                                            <li class="mega-menu-title"><a href="shop.php?cat=<?=$category['id']?>"><b class="fs-5 h5"><?= $category['name_en'] ?></b></a></li>
+                                                            <li class="mega-menu-title"><a href="shop.php?cat=<?= $category[
+                                                                'id'
+                                                            ] ?>"><b class="fs-5 h5"><?= $category[
+    'name_en'
+] ?></b></a></li>
                                                             <?php
-                                                            $subcategories->setCategories_fk_id($category['id']);
+                                                            $subcategories->setCategories_fk_id(
+                                                                $category['id']
+                                                            );
                                                             $subResult = $subcategories->read();
-                                                            if (!empty($subResult)) {
-                                                                $subcatData = $subResult->fetch_all(MYSQLI_ASSOC);
-                                                                foreach ($subcatData as $index => $subcategory) {
-                                                            ?>
-                                                                    <li><a href="shop.php?subcat=<?=$subcategory['id']?>"><?=$subcategory['name_en']?></a></li>
-                                                            <?php
-                                                                }
+                                                            if (
+                                                                !empty(
+                                                                    $subResult
+                                                                )
+                                                            ) {
+                                                                $subcatData = $subResult->fetch_all(
+                                                                    MYSQLI_ASSOC
+                                                                );
+                                                                foreach (
+                                                                    $subcatData
+                                                                    as $index =>
+                                                                        $subcategory
+                                                                ) { ?>
+                                                                    <li><a href="shop.php?subcat=<?= $subcategory[
+                                                                        'id'
+                                                                    ] ?>"><?= $subcategory[
+    'name_en'
+] ?></a></li>
+                                                            <?php }
                                                             }
                                                             ?>
                                                         </ul>
                                                     </li>
-                                            <?php
-                                                }
-                                            }
-                                            ?>
+                                            <?php }
+                                            } ?>
                                         </ul>
                                     </li>
                                     <li><a href="shop.php">Shop</a></li>
@@ -66,18 +81,28 @@ $subcategories->setStatus(1);
                                 </ul>
                             </nav>
                         </div>
-                        <div class="header-currency">
-                            <span class="digit">USD <i class="ti-angle-down"></i></span>
+                        <?php if (isset($_SESSION['user'])) { ?>
+                            <div class="header-currency">
+                            <span class="digit"><?= $_SESSION['user']
+                                ->name ?><i class="ti-angle-down"></i></span>
                             <div class="dollar-submenu">
                                 <ul>
-                                    <li><a href="#">$ USD</a></li>
-                                    <li><a href="#">€ EUR</a></li>
-                                    <li><a href="#">£ GBP</a></li>
-                                    <li><a href="#">₹ INR</a></li>
-                                    <li><a href="#">¥ JPY</a></li>
+                                    <li><a href="my-account.php">Profile</a></li>
+                                    <li><a href="logout.php">Logout</a></li>
                                 </ul>
                             </div>
                         </div>
+                        <?php } else { ?>
+                              <div class="header-currency">
+                            <span class="digit">Welcome Guest<i class="ti-angle-down"></i></span>
+                            <div class="dollar-submenu">
+                                <ul>
+                                    <li><a href="login.php">Login</a></li>
+                                    <li><a href="register.php">Register</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                       <?php } ?>
                         <div class="header-cart">
                             <a href="#">
                                 <div class="cart-icon">

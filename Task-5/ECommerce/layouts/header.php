@@ -1,5 +1,6 @@
 <?php 
 ob_start();
+session_start();
 ?>
 <!doctype html>
 <html class="no-js" lang="zxx">
