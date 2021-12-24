@@ -91,7 +91,7 @@ if ($_GET) {
         color: #519f10;
     }
 </style>
-<!-- Product Deatils Area Start -->
+<!-- Product Details Area Start -->
 <div class="product-details pt-100 pb-95">
     <div class="container">
         <div class="row">
@@ -166,7 +166,7 @@ if ($_GET) {
         </div>
     </div>
 </div>
-<!-- Product Deatils Area End -->
+<!-- Product Details Area End -->
 <div class="description-review-area pb-70">
     <div class="container">
         <div class="description-review-wrapper">
@@ -184,9 +184,9 @@ if ($_GET) {
                     <div class="rattings-wrapper">
                         <?php
                         $reviews->setProduct_fk_id($product->id);
-                        $reviewRelsult = $reviews->read();
-                        if (!empty($reviewRelsult)) {
-                            $reviewData = $reviewRelsult->fetch_all(MYSQLI_ASSOC);
+                        $reviewResult = $reviews->read();
+                        if (!empty($reviewResult)) {
+                            $reviewData = $reviewResult->fetch_all(MYSQLI_ASSOC);
                             foreach ($reviewData as $index => $review) { ?>
                                 <div class="sin-rattings">
                                     <div class="star-author-all">

@@ -352,4 +352,19 @@ class Product extends connection implements crud
         //print_r($query);die;
         return $this->runDQL($query);
     }
+    public function mostRecentProducts()
+    {
+        $query = "select * from products_details where STATUS=$this->status  order by created_at DESC limit 4";
+        return $this->runDQL($query);
+    }
+    public function mostRatedProducts()
+    {
+        $query = "SELECT * FROM `products_details` where status = $this->status order by reviews_count desc,reviews_average DESC limit 4";
+        return $this->runDQL($query);
+    }
+    public function mostOrderedProducts()
+    {
+        $query = "SELECT * ,count(products.id) as count,sum(products_orders.quantity) as total_quantity FROM `products` join products_orders on products.id = products_orders.product_fk_id where STATUS = $this->status  group by products.id  order by count DESC , total_quantity DESC  limit 4";
+        return $this->runDQL($query);
+    }
 }
