@@ -1,6 +1,14 @@
 <?php 
 ob_start();
 session_start();
+if (isset($_COOKIE['user'])) {
+    include_once 'app/database/models/User.php';
+    $userObj = new User();
+    $userObj->setEmail($_COOKIE['user']);
+    $Result = $userObj->checkEmailExists();
+    $resultData = $Result->fetch_object();
+    $_SESSION['user'] = $resultData;
+}
 ?>
 <!doctype html>
 <html class="no-js" lang="zxx">

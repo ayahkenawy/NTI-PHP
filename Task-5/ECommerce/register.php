@@ -48,7 +48,7 @@ if ($_POST) {
                 //header to verify code
                 $_SESSION['user_email'] = $_POST['email'];
                 header('location:verify_code.php?page=register');
-                die;
+                die();
             }
         }
     }
@@ -80,15 +80,15 @@ if ($_POST) {
                                     ?>
                                     <form action="#" method="post">
                                         <input type="text" name="full_name" placeholder="User Full name" value="<?= isset(
-                                                                                                                    $_POST['full_name']
-                                                                                                                )
-                                                                                                                    ? $_POST['full_name']
-                                                                                                                    : '' ?>">
+                                            $_POST['full_name']
+                                        )
+                                            ? $_POST['full_name']
+                                            : '' ?>">
                                         <input name="email" placeholder="Email" type="email" value="<?= isset(
-                                                                                                        $_POST['email']
-                                                                                                    )
-                                                                                                        ? $_POST['email']
-                                                                                                        : '' ?>">
+                                            $_POST['email']
+                                        )
+                                            ? $_POST['email']
+                                            : '' ?>">
                                         <?php
                                         if (!empty($emailResult)) {
                                             foreach ($emailResult as $value) {
@@ -96,34 +96,44 @@ if ($_POST) {
                                             }
                                         }
                                         if (!empty($emailExistsResult)) {
-                                            foreach ($emailExistsResult
-                                                as $value) {
+                                            foreach (
+                                                $emailExistsResult
+                                                as $value
+                                            ) {
                                                 echo $value;
                                             }
                                         }
                                         ?>
                                         <input name="phone" placeholder="Phone" type="tel" value="<?= isset(
-                                                                                                        $_POST['phone']
-                                                                                                    )
-                                                                                                        ? $_POST['phone']
-                                                                                                        : '' ?>">
+                                            $_POST['phone']
+                                        )
+                                            ? $_POST['phone']
+                                            : '' ?>">
                                         <?php if (!empty($phoneExistsResult)) {
-                                            foreach ($phoneExistsResult
-                                                as $value) {
+                                            foreach (
+                                                $phoneExistsResult
+                                                as $value
+                                            ) {
                                                 echo $value;
                                             }
                                         } ?>
                                         <input type="password" name="password" placeholder="Password">
                                         <?php
                                         if (!empty($passwordValidation)) {
-                                            echo $passwordValidation['password_required'];
+                                            echo $passwordValidation[
+                                                'password_required'
+                                            ];
                                         }
                                         if (
                                             isset(
-                                                $confirmPasswordEqualPassword['password_pattern']
+                                                $confirmPasswordEqualPassword[
+                                                    'password_pattern'
+                                                ]
                                             )
                                         ) {
-                                            echo $confirmPasswordEqualPassword['password_pattern'];
+                                            echo $confirmPasswordEqualPassword[
+                                                'password_pattern'
+                                            ];
                                         }
                                         ?>
                                         <input type="password" name="confirm_password" placeholder="Confirm Password">
@@ -131,27 +141,33 @@ if ($_POST) {
                                         if (
                                             !empty($confirmPasswordValidation)
                                         ) {
-                                            echo $confirmPasswordValidation['confirmPassword_required'];
+                                            echo $confirmPasswordValidation[
+                                                'confirmPassword_required'
+                                            ];
                                         }
                                         if (
                                             isset(
-                                                $confirmPasswordEqualPassword['notmatched']
+                                                $confirmPasswordEqualPassword[
+                                                    'notmatched'
+                                                ]
                                             )
                                         ) {
-                                            echo $confirmPasswordEqualPassword['notmatched'];
+                                            echo $confirmPasswordEqualPassword[
+                                                'notmatched'
+                                            ];
                                         }
                                         ?>
                                         <select name="gender" class="form-control">
                                             <option value="m" <?= isset(
-                                                                    $_POST['gender']
-                                                                ) && $_POST['gender'] == 'm'
-                                                                    ? 'selected'
-                                                                    : '' ?>>Male</option>
+                                                $_POST['gender']
+                                            ) && $_POST['gender'] == 'm'
+                                                ? 'selected'
+                                                : '' ?>>Male</option>
                                             <option value="f" <?= isset(
-                                                                    $_POST['gender']
-                                                                ) && $_POST['gender'] == 'f'
-                                                                    ? 'selected'
-                                                                    : '' ?>>Female</option>
+                                                $_POST['gender']
+                                            ) && $_POST['gender'] == 'f'
+                                                ? 'selected'
+                                                : '' ?>>Female</option>
                                         </select>
                                         <div class="button-box mt-5">
                                             <button type="submit"><span>Register</span></button>

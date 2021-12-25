@@ -276,6 +276,13 @@ class User extends connection implements crud
     }
     public function update()
     {
+        $image = '';
+        if ($this->img) {
+            $image = ", img = '$this->img' ";
+        }
+        $query = "UPDATE users SET phone =  '$this->phone' , name =  '$this->name' , gender =  '$this->gender' $image WHERE email = '$this->email' ";
+
+        return $this->runDML($query);
     }
     public function delete()
     {
@@ -303,6 +310,11 @@ class User extends connection implements crud
     public function updatePassword()
     {
         $query = "UPDATE users SET password =  '$this->password' WHERE email = '$this->email' ";
+        return $this->runDML($query);
+    }
+    public function updateEmail()
+    {
+        $query = "UPDATE users SET email =  '$this->email' , STATUS =  $this->status WHERE id = '$this->id' ";
         return $this->runDML($query);
     }
 }

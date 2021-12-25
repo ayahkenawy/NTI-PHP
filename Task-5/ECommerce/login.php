@@ -29,6 +29,10 @@ if ($_POST) {
             switch ($loginData->status) {
                 case '1':
                     $_SESSION['user'] = $loginData;
+                    // print_r($_POST);die;
+                    if (isset($_POST['remember_me'])) {
+                        setcookie("user", $_POST['email'], time() + (86400 * 30), "/"); // 86400 = 1 day
+                    }
                     header('location:index.php');
                     die();
                 case '0':
@@ -62,11 +66,11 @@ if ($_POST) {
                                             echo $msg;
                                         } ?>
                                         <input type="email" name="email" placeholder="Email" value="<?php if (
-                                            isset($_SESSION['user_email'])
-                                        ) {
-                                            echo $_SESSION['user_email'];
-                                            unset($_SESSION['user_email']);
-                                        } ?>">
+                                                                                                        isset($_SESSION['user_email'])
+                                                                                                    ) {
+                                                                                                        echo $_SESSION['user_email'];
+                                                                                                        unset($_SESSION['user_email']);
+                                                                                                    } ?>">
                                         <?php if (!empty($emailResult)) {
                                             foreach ($emailResult as $value) {
                                                 echo $value;
@@ -75,15 +79,11 @@ if ($_POST) {
                                         <input type="password" name="password" placeholder="Password">
                                         <?php
                                         if (!empty($passwordValidation)) {
-                                            echo $passwordValidation[
-                                                'password_required'
-                                            ];
+                                            echo $passwordValidation['password_required'];
                                         }
                                         if (
                                             isset(
-                                                $passwordPatternValidation[
-                                                    'password_pattern'
-                                                ]
+                                                $passwordPatternValidation['password_pattern']
                                             )
                                         ) {
                                             echo "<div class='alert alert-danger'>wrong Attempt</div>";
@@ -91,7 +91,7 @@ if ($_POST) {
                                         ?>
                                         <div class="button-box">
                                             <div class="login-toggle-btn">
-                                                <input type="checkbox">
+                                                <input type="checkbox" name="remember_me">
                                                 <label>Remember me</label>
                                                 <a href="verify-email.php">Forgot Password?</a>
                                             </div>
